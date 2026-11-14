@@ -9,6 +9,27 @@ Sideload books to a newer Kindle with calibre, have them show up as **Books** (n
 
 Why: for a Book (cdetype `EBOK`) the Kindle does not take the cover from the file. It uses a thumbnail in `system/thumbnails`, or it downloads the cover from Amazon using the book's ASIN. calibre does try to place that thumbnail when sending over USB, but on newer Kindles that connect over MTP the cover can still be missing (on the device this was tested on, the `system` folder is not even visible over USB). And calibre writes the book's own calibre UUID as the ASIN (EXTH record 113), even when the book has a real Amazon identifier. So the Kindle cannot fetch the cover from Amazon either.
 
+## Before you use this: the KFX Output plugin already does this
+
+The established [KFX Output plugin](https://www.mobileread.com/forums/showthread.php?t=272407) by jhowell gives the same result, and for most people it is the better choice:
+
+1. Install Kindle Previewer (KFX Output needs it for the conversion) and the KFX Output plugin.
+2. Make sure the book has the real ASIN in its Amazon identifier (see *Use* below).
+3. Convert to KFX with the option **Create book (EBOK)** checked (Convert books > KFX Output). Without that option the result is a personal document, even if the ASIN is present.
+4. Send the KFX to the device.
+
+Checked with KFX Output 2.22.0 and Kindle Previewer 4.0.4: the KFX file gets the real ASIN and cdetype `EBOK`, the same values this plugin writes into AZW3. KFX also gives you Amazon's enhanced typesetting.
+
+This plugin only makes sense if you want to stay with AZW3, for example to avoid installing Kindle Previewer or because a book fails to convert to KFX.
+
+Thanks to the r/Calibre commenters who pointed this out.
+
+## Risk: sideloaded "Books" can be removed
+
+Users report that sideloaded books marked as `EBOK` (AZW3 or KFX, with this plugin or with KFX Output) can be deleted by the Kindle when it reconnects after being offline or in airplane mode for a long time. This is not confirmed by Amazon, but it applies to every route that makes a sideloaded book a Book. Keep your books in calibre so you can send them again, and keep Wi-Fi on. Personal documents (`PDOC`) are not affected.
+
+If you mainly want covers and are fine with Docs, a personal document is the safer option. If you also want the book in the cloud and reading position sync between devices, use Send to Kindle (it always files books under Docs).
+
 ## What the plugin does
 
 It replaces calibre's built-in MOBI metadata writer for AZW3, MOBI and AZW files. It writes the same metadata calibre writes and, if the book has an Amazon identifier that looks like a Kindle ASIN (`B` + 9 characters), it writes that ASIN into EXTH 113 and 504 and sets cdetype `EBOK`.
